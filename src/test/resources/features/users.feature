@@ -226,18 +226,42 @@ Feature: Users api tests
     And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"42"}
     And I POST /users
     And http response code should be 201
+    When I DELETE /users/1
+    Then http response code should be 200
+    And http response body path $ should not have content
+    When I GET /users/1
+    Then http response code should be 404
+
+  Scenario: Delete one user keeps the other users
+    Given I authenticate with login/password tstark/marvel
+    And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"42"}
+    And I POST /users
+    And http response code should be 201
+    And I set http body to {"id": "2","firstName":"Bruce","lastName":"Wayne","age":"50"}
+    And I POST /users
+    And http response code should be 201
+    When I DELETE /users/1
+    Then http response code should be 200
+    When I GET /users
+    Then http response code should be 200
+    And http response body is typed as array using path $ with length 1
+    And http response body path $.[0].id should be 2
+    When I DELETE /users/2
+    Then http response code should be 200
+
+  Scenario: Delete all users leaves an empty list
+    Given I authenticate with login/password tstark/marvel
     And I set http body to {"id": "2","firstName":"Bruce","lastName":"Wayne","age":"50"}
     And I POST /users
     And http response code should be 201
     And I set http body with file fixtures/bruce-banner.user.json
     And I POST /users
     And http response code should be 201
-    When I DELETE /users/1
-    Then http response code should be 200
-    And I DELETE /users/2
+    When I DELETE /users/2
     Then http response code should be 200
     And I DELETE /users/15948349393
     Then http response code should be 200
-    And  I GET /users
+    When I GET /users
+    Then http response code should be 200
     And http response body is typed as array using path $ with length 0
     And http response body path $ should not have content

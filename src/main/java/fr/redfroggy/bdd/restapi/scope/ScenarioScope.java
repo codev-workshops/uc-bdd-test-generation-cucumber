@@ -26,4 +26,12 @@ public class ScenarioScope {
     public Map<String, Object> getJsonPaths() {
         return jsonPaths;
     }
+
+    /**
+     * Remove all stored headers and json paths
+     */
+    public void clear() {
+        headers.clear();
+        jsonPaths.clear();
+    }
 }

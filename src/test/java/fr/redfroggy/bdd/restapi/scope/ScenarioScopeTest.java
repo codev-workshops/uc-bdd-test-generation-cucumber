@@ -12,4 +12,15 @@ public class ScenarioScopeTest {
         Assert.assertNotNull(scenarioScope.getHeaders());
         Assert.assertNotNull(scenarioScope.getJsonPaths());
     }
+
+    @Test
+    public void shouldClearHeadersAndJsonPaths() {
+        scenarioScope.getHeaders().put("token", "value");
+        scenarioScope.getJsonPaths().put("id", "1");
+
+        scenarioScope.clear();
+
+        Assert.assertTrue(scenarioScope.getHeaders().isEmpty());
+        Assert.assertTrue(scenarioScope.getJsonPaths().isEmpty());
+    }
 }

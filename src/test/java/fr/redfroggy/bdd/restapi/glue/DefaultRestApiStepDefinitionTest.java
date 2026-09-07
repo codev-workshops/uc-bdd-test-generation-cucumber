@@ -2,7 +2,7 @@ package fr.redfroggy.bdd.restapi.glue;
 
 import fr.redfroggy.bdd.restapi.authentication.BddRestTemplateAuthentication;
 import fr.redfroggy.bdd.restapi.user.UserController;
-import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -28,9 +28,14 @@ public class DefaultRestApiStepDefinitionTest implements BddRestTemplateAuthenti
         return this.template.withBasicAuth(login, password);
     }
 
-    @After("@import")
-    public void afterImport() {
+    /**
+     * Reset application state and the (static) scenario scope before every scenario
+     * so that no data or variable leaks from one scenario to another.
+     */
+    @Before
+    public void resetState() {
         UserController.users.clear();
+        AbstractBddStepDefinition.scenarioScope.clear();
     }
 
 }

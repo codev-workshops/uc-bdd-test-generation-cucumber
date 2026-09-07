@@ -34,8 +34,6 @@ Feature: Users api tests
     And I store the value of http body path $.id as starkUser in scenario scope
     And I store the value of http body path $.sessionIds.[0] as firstSessionId in scenario scope
     And http value of scenario variable starkUser should be 1
-    When I DELETE /users/`$starkUser`
-    Then http response code should be 200
 
   Scenario: Add bruce wayne user
     When I authenticate with login/password tstark/marvel
@@ -61,10 +59,6 @@ Feature: Users api tests
     And http response body path $.age should be 50
     And http response body path $.relatedTo.id should be 1
     And http response body path $.sessionIds should be ["43233333"]
-    When I DELETE /users/1
-    Then http response code should be 200
-    When I DELETE /users/2
-    Then http response code should be 200
 
   Scenario: Add bruce banner user
     When I authenticate with login/password tstark/marvel
@@ -76,8 +70,6 @@ Feature: Users api tests
     And http response body path $.lastName should be Banner
     And http response body path $.age should be 45
     And http response body path $.sessionIds should be ["99869448"]
-    When I DELETE /users/15948349393
-    Then http response code should be 200
     
   Scenario: Update tony stark user
     Given I authenticate with login/password tstark/marvel
@@ -92,8 +84,6 @@ Feature: Users api tests
     When I GET /users/1
     Then http response code should be 200
     And http response body path $.age should be 60
-    When I DELETE /users/1
-    Then http response code should be 200
 
   Scenario: Patch bruce wayne user
     Given I authenticate with login/password tstark/marvel
@@ -108,8 +98,6 @@ Feature: Users api tests
     When I GET /users/2
     Then http response code should be 200
     And http response body path $.lastName should be WAYNE
-    When I DELETE /users/2
-    Then http response code should be 200
 
   Scenario: Get users
     Given I authenticate with login/password tstark/marvel
@@ -134,12 +122,6 @@ Feature: Users api tests
     And http response body path $.[1].id should exists
     And http response body path $.[4].id should not exist
     And http response body should contain Bruce
-    When I DELETE /users/1
-    Then http response code should be 200
-    When I DELETE /users/2
-    Then http response code should be 200
-    When I DELETE /users/15948349393
-    Then http response code should be 200
 
   Scenario: Search for valid users
     Given I authenticate with login/password tstark/marvel
@@ -156,10 +138,6 @@ Feature: Users api tests
     And http response body is typed as array using path $ with length 1
     And http response body path $.[0].id should be 2
     And http response body path $.[0].firstName should be Bruce
-    When I DELETE /users/1
-    Then http response code should be 200
-    When I DELETE /users/2
-    Then http response code should be 200
 
   Scenario: Search for invalid users
     Given I authenticate with login/password tstark/marvel
@@ -172,8 +150,6 @@ Feature: Users api tests
     Then http response code should be 200
     And http response body is typed as array using path $ with length 0
     And http response body path $ should not have content
-    When I DELETE /users/1
-    Then http response code should be 200
 
   Scenario: Get user Tony Stark
     Given I authenticate with login/password tstark/marvel
@@ -192,8 +168,6 @@ Feature: Users api tests
     And I store the value of http response header Content-Type as httpContentType in scenario scope
     And http value of scenario variable httpContentType should be application/json
     And http response body should contain `$firstSessionId`
-    When I DELETE /users/1
-    Then http response code should be 200
 
   Scenario: Get user Bruce Wayne
     Given I authenticate with login/password tstark/marvel
@@ -207,8 +181,6 @@ Feature: Users api tests
     And http response body path $.firstName should be Bruce
     And http response body path $.lastName should be WAYNE
     And http response body path $.age should be 50
-    When I DELETE /users/2
-    Then http response code should be 200
 
   Scenario: Get wrong user
     When I GET /users/24333
@@ -246,8 +218,6 @@ Feature: Users api tests
     Then http response code should be 200
     And http response body is typed as array using path $ with length 1
     And http response body path $.[0].id should be 2
-    When I DELETE /users/2
-    Then http response code should be 200
 
   Scenario: Delete all users leaves an empty list
     Given I authenticate with login/password tstark/marvel

@@ -235,3 +235,40 @@ Feature: Users api tests
     Then http response code should be 200
     And http response body is typed as array using path $ with length 0
     And http response body path $ should not have content
+
+  Scenario: Add user with an already existing id is rejected
+    Given I authenticate with login/password tstark/marvel
+    And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"42"}
+    And I POST /users
+    And http response code should be 201
+    When I set http body to {"id":"1","firstName":"Anthony","lastName":"Stark","age":"43"}
+    And I POST /users
+    Then http response code should be 400
+    And http response body path $ should not have content
+    When I GET /users
+    Then http response body is typed as array using path $ with length 1
+    And http response body path $.[0].firstName should be Tony
+
+  Scenario: Get user fails when third party details api fails
+    Given I authenticate with login/password tstark/marvel
+    And I set http body to {"id":"1","firstName":"Tony","lastName":"Stark","age":"42"}
+    And I POST /users
+    And http response code should be 201
+    When I mock third party api call GET /public/characters/1 with return code 503, content type: application/json and body: {"error": "Service unavailable"}
+    And I GET /users/1
+    Then http response code should be 400
+    And http response body path $ should not have content
+
+  Scenario: Update wrong user
+    Given I authenticate with login/password tstark/marvel
+    And I set http body to {"id":"24333","firstName":"Nobody","lastName":"Unknown","age":"30"}
+    When I PUT /users/24333
+    Then http response code should be 404
+    And http response body path $ should not have content
+
+  Scenario: Patch wrong user
+    Given I authenticate with login/password tstark/marvel
+    And I set http body to {"lastName":"Unknown"}
+    When I PATCH /users/24333
+    Then http response code should be 404
+    And http response body path $ should not have content

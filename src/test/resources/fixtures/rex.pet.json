@@ -1,0 +1,9 @@
+{
+  "id": "1",
+  "name": "Rex",
+  "category": "dog",
+  "status": "available",
+  "age": 3,
+  "tags": ["friendly", "trained"],
+  "photoUrls": ["https://example.org/pets/rex.jpg"]
+}

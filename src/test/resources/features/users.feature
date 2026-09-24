@@ -156,3 +156,39 @@ Feature: Users api tests
     And  I GET /users
     And http response body is typed as array using path $ with length 0
     And http response body path $ should not have content
+
+  Scenario: Create duplicate user should be rejected
+    When I authenticate with login/password tstark/marvel
+    And I set http body to {"id":"7001","firstName":"Peter","lastName":"Quill","age":"34"}
+    And I POST /users
+    Then http response code should be 201
+    When I set http body to {"id":"7001","firstName":"Peter","lastName":"Quill","age":"34"}
+    And I POST /users
+    Then http response code should be 400
+    And http response body path $ should not have content
+    When I DELETE /users/7001
+    Then http response code should be 200
+
+  Scenario: Get user when third party details call fails
+    When I authenticate with login/password tstark/marvel
+    And I set http body to {"id":"7002","firstName":"Natasha","lastName":"Romanoff","age":"35"}
+    And I POST /users
+    Then http response code should be 201
+    When I mock third party api call GET /public/characters/7002 with return code 500, content type: application/json and body: {"error": "internal server error"}
+    And I GET /users/7002
+    Then http response code should be 400
+    And http response body path $ should not have content
+    When I DELETE /users/7002
+    Then http response code should be 200
+
+  Scenario: Update non-existent user
+    When I set http body to {"id":"99999","firstName":"Nobody","lastName":"Unknown","age":"1"}
+    And I PUT /users/99999
+    Then http response code should be 404
+    And http response body path $ should not have content
+
+  Scenario: Patch non-existent user
+    When I set http body to {"lastName":"Unknown"}
+    And I PATCH /users/99999
+    Then http response code should be 404
+    And http response body path $ should not have content
